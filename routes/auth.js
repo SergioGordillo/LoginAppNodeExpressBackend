@@ -1,37 +1,17 @@
 const { Router } = require("express");
+const { register, login, accessControl } = require("../controllers/auth");
 
 const router = Router(); 
 
 
 // CREATING NEW USER
-router.post('/register',(req, resp)=>{
-
-    return resp.json({
-        ok: "true",
-        message: "The user has been registered"
-    });
-
-});
+router.post('/register', register);
 
 // USER LOGIN
-router.post('/',(req, resp)=>{
-
-    return resp.json({
-        ok: "true",
-        message: "The user has logged in"
-    });
-
-});
+router.post('/', login);
 
 // TOKEN VALIDATION
-router.get('/access-control',(req, resp)=>{
-
-    return resp.json({
-        ok: "true",
-        message: "The token is valid"
-    });
-
-});
+router.get('/access-control', accessControl);
 
 
 
