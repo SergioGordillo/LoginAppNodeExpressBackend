@@ -1,8 +1,11 @@
 const { response } = require("express");
+ 
 
 
 
 const register = (req, resp = response)=>{
+
+    const { email, password } = req.body;
 
     return resp.json({
         ok: "true",
@@ -12,6 +15,8 @@ const register = (req, resp = response)=>{
 }
 
 const login = (req, resp = response)=>{
+
+    const { email, password } = req.body;
 
     return resp.json({
         ok: "true",
