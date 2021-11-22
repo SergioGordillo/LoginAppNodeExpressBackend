@@ -1,6 +1,7 @@
 const { response } = require("express");
 const User = require("../models/User");
 const bcrypt = require ("bcryptjs");
+const { generateJWT } = require("../helpers/jwt");
  
 const register = async (req, resp = response)=>{
 
@@ -21,15 +22,15 @@ const register = async (req, resp = response)=>{
         const salt=bcrypt.genSaltSync();
         userDB.password=bcrypt.hashSync(password, salt);
 
+        const token=await generateJWT(email, userDB.password);
+
         await userDB.save(); 
 
         return resp.status(201).json({
             ok: true,
-            message: "The user has been registered"
+            message: "The user has been registered",
+            token
         })
-
-
-
 
     } catch (err) {
         return resp.status(500).json({
