@@ -3,9 +3,11 @@ const User = require("../models/User");
 const bcrypt = require ("bcryptjs");
 const { generateJWT } = require("../helpers/jwt");
  
+
+// USER REGISTER
 const register = async (req, resp = response)=>{
 
-    const { email, password } = req.body;
+    const { name, email, password } = req.body;
 
     try {
         const user = await User.findOne({email})
@@ -22,7 +24,7 @@ const register = async (req, resp = response)=>{
         const salt=bcrypt.genSaltSync();
         userDB.password=bcrypt.hashSync(password, salt);
 
-        const token=await generateJWT(email, userDB.password);
+        const token=await generateJWT(email, name);
 
         await userDB.save(); 
 
@@ -41,21 +43,58 @@ const register = async (req, resp = response)=>{
 
 }
 
-const login = (req, resp = response)=>{
+// USER LOGIN
+const login = async (req, resp = response)=>{
 
     const { email, password } = req.body;
 
-    return resp.json({
-        ok: true,
-        message: "The user has logged in"
-    });
+    try {
+
+        const userDB = await User.findOne({email});
+
+        if (!userDB) {
+            return resp.status(400).json({
+                ok: false,
+                message: "Email or password do not exist"
+            })
+        }
+
+        const correctPassword = bcrypt.compareSync(password, userDB.password);
+
+        if (!correctPassword) {
+            return resp.status(400).json({
+                ok: false,
+                message: "Email or password do not exist"
+            })
+        }
+
+        const token=await generateJWT(email, userDB.name);
+        
+        return resp.status(200).json({
+            ok: true,
+            message: "The user has logged in",
+            token
+        })
+
+    } catch (err) {
+        return resp.status(500).json({
+            ok: false,
+            message: "Server internal error"
+        });
+    }
 }
 
-const accessControl = (req, resp = response)=>{
+const accessControl = async (req, resp = response)=>{
+
+   const { email, name } = req;
+  
+   const token  = await generateJWT(email, name);
 
     return resp.json({
         ok: true,
-        message: "The token is valid"
+        message: "The token is valid", 
+        name, 
+        token
     });
 
 }

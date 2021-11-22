@@ -2,6 +2,7 @@ const { Router } = require("express");
 const { check } = require("express-validator");
 const { register, login, accessControl } = require("../controllers/auth");
 const { fieldsValidators } = require("../middlewares/fields-validators");
+const { validateJWT } = require("../middlewares/jwt-validator");
 
 const router = Router(); 
 
@@ -22,7 +23,7 @@ router.post('/', [
 ], login);
 
 // TOKEN VALIDATION
-router.get('/access-control', accessControl);
+router.get('/access-control', validateJWT, accessControl);
 
 
 
