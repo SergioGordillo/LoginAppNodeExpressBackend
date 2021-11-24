@@ -31,6 +31,7 @@ const register = async (req, resp = response)=>{
         return resp.status(201).json({
             ok: true,
             message: "The user has been registered",
+            name,
             token
         })
 
@@ -73,6 +74,7 @@ const login = async (req, resp = response)=>{
         return resp.status(200).json({
             ok: true,
             message: "The user has logged in",
+            name: userDB.name,
             token
         })
 
